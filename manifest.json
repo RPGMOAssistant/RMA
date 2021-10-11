@@ -1,0 +1,42 @@
+{
+    "name": "RPG MO Assistant",
+    "description": "RPG MO tools",
+    "version": "1.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "notifications"
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "init.js"
+            ],
+            "css": [
+                "rma.css"
+            ],
+            "matches": [
+                "https://rpg-de.mo.ee/*"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "utils.js", "popup.js", "automation/healing.js", "automation/fight.js", "menu.html", "captcha-notifier.js", "img/notification.png"
+            ],
+            "matches": [
+                "https://rpg-de.mo.ee/*"
+            ]
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
