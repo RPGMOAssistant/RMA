@@ -29,7 +29,14 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "utils.js", "popup.js", "automation/healing.js", "automation/fight.js", "menu.html", "captcha-notifier.js", "img/notification.png"
+                "utils.js", 
+                "popup.js", 
+                "automation/healing.js", 
+                "automation/fight.js", 
+                "automation/farming.js", 
+                "menu.html", 
+                "captcha-notifier.js", 
+                "img/notification.png"
             ],
             "matches": [
                 "https://rpg-de.mo.ee/*"

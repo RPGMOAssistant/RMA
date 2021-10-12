@@ -1,16 +1,12 @@
-let state = {
-    target: null,
-};
-
 // Click on the Fight automation button in the menu
 const findRecheableEnnemiesButton = document.querySelector('#automation #fight .start');
 findRecheableEnnemiesButton.addEventListener('click', (e) => {
 
     // Find all reachable targets (ennemies we can walk to)
-    const reachableTargets = findReachableTargets();
+    const reachableTargets = findReachableObjects((obj) => obj?.activities.includes("Attack"));
 
     const uniqueEnemies = reachableTargets.reduce((acc, target) => {
-        if (!acc.some(t => t.b_i === target.b_i)) {
+        if (!acc.some(t => t.name === target.name)) {
             acc.push(target);
         }
         return acc;
@@ -45,24 +41,6 @@ const buildReachableEnnemiesList = (uniqueEnemies) => {
     }
 }
 
-const findReachableTargets = (target) => {
-    let reachableTargets = [];
-
-    for (var i = 0; i < on_map[current_map].length; i++) {
-        var thing = on_map[current_map][i];
-        for (var j = 0; j < thing.length; j++) {
-            if (!target || obj_g(thing[j])?.b_i === target.b_i) {
-                const pathTo = findPathFromTo(players[0], { i, j }, players[0]);
-                if (pathTo.length > 0 && obj_g(thing[j])?.activities && obj_g(thing[j]).activities.includes('Attack')) {
-                    reachableTargets.push(obj_g(thing[j]));
-                }
-            }
-        }
-    }
-
-    return reachableTargets;
-}
-
 setInterval(() => {
     if (!state.target) {
         return;
@@ -89,25 +67,12 @@ setInterval(() => {
 
     console.log(`Target set to ${state.target.name}`);
 
-    const targets = findReachableTargets(state.target);
-
-    const paths = targets.map(target => ({
-        target,
-        path: findPathFromTo(players[0], { i: target.i, j: target.j }, players[0])
-    }));
-
-    let shortest;
-    for (const path of paths) {
-        if (path.path.length > 0 && (!shortest || path.path.length < shortest.length)) {
-            shortest = path;
-        }
-    }
-
-    players[0].path = shortest.path;
+    const { path: pathToTarget, item: closestTarget } = findClosestReachableObject(obj => obj?.name === state.target.name);
+    players[0].path = pathToTarget;
 
     waitFor(() => !movementInProgress(players[0]) && !Timers.running("set_target"), () => {
-        selected = obj_g(on_map[current_map][shortest.target.i][shortest.target.j]);
-        selected_object = obj_g(on_map[current_map][shortest.target.i][shortest.target.j]);
-        Player.set_target({ i: shortest.target.i, j: shortest.target.j});
+        selected = obj_g(on_map[current_map][closestTarget.i][closestTarget.j]);
+        selected_object = obj_g(on_map[current_map][closestTarget.i][closestTarget.j]);
+        Player.set_target({ i: closestTarget.i, j: closestTarget.j});
     });
 }, 5000);

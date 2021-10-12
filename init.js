@@ -5,7 +5,7 @@
 fetch(chrome.runtime.getURL('/menu.html')).then(r => r.text()).then(html => {
     document.querySelector("#wrapper").insertAdjacentHTML('beforeend', html);
 
-    const scripts = ["utils.js", "captcha-notifier.js", "automation/healing.js", "automation/fight.js"];
+    const scripts = ["utils.js", "captcha-notifier.js", "automation/healing.js", "automation/fight.js", "automation/farming.js"];
 
     for (const filename of scripts) {
         var s = document.createElement('script');

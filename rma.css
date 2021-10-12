@@ -48,6 +48,26 @@ button {
     margin-bottom: 8px;
 }
 
+.item {
+    width: 32px;
+    height: 32px;
+    margin: 2px 2px;
+    padding: 0;
+    display: inline-block;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 9px;
+    text-shadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
+    font-family: "Courier New";
+    overflow: hidden;
+}
+
+/**
+* ==============
+*    Fighting
+* ==============
+*/
+
 .enemyCard {
     padding: 10px;
     background: #363636;
@@ -62,4 +82,30 @@ button {
 .enemyCard.active{
     background: #444444;
     border: 1px solid #c6cda1;
+}
+
+/**
+* =============
+*    FARMING
+* =============
+*/
+
+.seedCard {
+    padding: 10px;
+    background: #363636;
+    border: 1px solid #4b4b4b;
+    color: #d1d1d1;
+    font-weight: lighter;
+    border-radius: 4px;
+    font-family: sans-serif;
+    margin-bottom: 8px;
+}
+
+.seedCard.active{
+    background: #444444;
+    border: 1px solid #c6cda1;
+}
+
+.seedCard .count{
+    background: red;
 }
