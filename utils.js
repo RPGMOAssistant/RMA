@@ -6,14 +6,18 @@ const RMA_CONFIG = {
     MIN_HEALTH_HEALING_THRESHOLD: 85 
 };
 
+const DEFAULT_FARMING_STATE = {
+    seed: null,
+    isRaking: false,
+    isGettingSeeds: false,
+    isSeeding: false,
+    isHarvesting: false,
+    isStoringHarvest: false,
+};
+
 let state = {
     target: null,
-    farming: {
-        seed: null,
-        isRaking: false,
-        isGettingSeeds: false,
-        isSeeding: false,
-    }
+    farming: { ...DEFAULT_FARMING_STATE }
 };
 
 /**
@@ -135,8 +139,21 @@ const inventoryHasItem = (id) => inventoryItemCount(id) >= 1;
 
 const chestHasItem = (id) => !!chest_content.find(item => item.id == id)?.count > 0;
 
-const openClosestChest = () => {
-    const { path: pathToChest, item: closestChest } = findClosestReachableObject(obj => obj?.name.includes("Chest"));
-    selected_object = obj_g(on_map[current_map][closestChest.i] && on_map[current_map][closestChest.i][closestChest.j]);
-    ActionMenu.act(0);
+const openClosestChest = async () => {
+    return new Promise((resolve, reject) => {
+        if (!Chest.is_open()) {
+            resolve();
+        }
+
+        const { path: pathToChest, item: closestChest } = findClosestReachableObject(obj => obj?.name.includes("Chest"));
+        selected_object = obj_g(on_map[current_map][closestChest.i] && on_map[current_map][closestChest.i][closestChest.j]);
+        ActionMenu.act(0);
+
+        waitFor(() => Chest.is_open(), () => {
+            resolve();
+        });
+    });
 }
+
+const getInventoryFreeSpace = () => Inventory.slots - players[0].temp.inventory.length;
+const inventoryHasItemsNotSelected = () => Inventory.slots - players[0].temp.inventory.filter(obj => obj.selected).length;
