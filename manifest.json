@@ -29,7 +29,10 @@
     "web_accessible_resources": [
         {
             "resources": [
+                "main.js",
                 "utils.js", 
+                "builder/actions.js",
+                "builder/builder.js",
                 "popup.js", 
                 "automation/healing.js", 
                 "automation/fight.js", 

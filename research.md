@@ -127,12 +127,17 @@ In this example, we find the shortest path to an ennemy and attack it
     ActionMenu.act(0);
 ```
 
-# Images
+#### Mouse position to i,j position
+
+```js
+translateMousePosition(mouse_screen.x, mouse_screen.y);
+```
+
+### Images
 
 ```js
 Items.get_background_image(item_b_i);
 ```
-
 
 ### Bases
 
