@@ -6,6 +6,10 @@ const RMA_CONFIG = {
     MIN_HEALTH_HEALING_THRESHOLD: 85 
 };
 
+const STATE_BUILDER_RUNNING = 'STATE_BUILDER_RUNNING';
+const STATE_BUILDER_STOPPED = 'STATE_BUILDER_STOPPED';
+const STATE_BUILDER_ADDING_ACTION = 'STATE_BUILDER_ADDING_ACTION';
+
 const DEFAULT_FARMING_STATE = {
     seed: null,
     isRaking: false,
@@ -47,9 +51,17 @@ const waitFor = (condition, callback) => {
  * Send a notification to the background script, which will trigger a Chrome notification
  * @param {string} type : The notification type. Hardcoded string. Check background.js to know which types can be used 
  */
-const notify = (type) => {
-    var event = new CustomEvent("PassToBackground", { detail: { notification: type } });
+const passToBackground = (detail) => {
+    var event = new CustomEvent("PassToBackground", { detail });
     window.dispatchEvent(event);
+}
+
+const notify = (type) => {
+    passToBackground({ notification: type });
+}
+
+const download = (content, filename) => {
+    passToBackground({ download: { content, filename }});
 }
 
 /**

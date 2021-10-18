@@ -10,7 +10,8 @@
         "storage",
         "activeTab",
         "scripting",
-        "notifications"
+        "notifications",
+        "downloads"
     ],
     "content_scripts": [
         {
@@ -29,8 +30,10 @@
     "web_accessible_resources": [
         {
             "resources": [
+                "libs/reef.min.js",
+                "utils.js",
+                "menu.js",
                 "main.js",
-                "utils.js", 
                 "builder/actions.js",
                 "builder/builder.js",
                 "popup.js", 

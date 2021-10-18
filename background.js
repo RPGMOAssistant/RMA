@@ -10,5 +10,9 @@ chrome.runtime.onMessage.addListener(
                     priority: 2,
                 });
         }
+
+        if (request?.download) {
+            // todo download file with request.download.content and request.download.filename
+        }
     }
 );

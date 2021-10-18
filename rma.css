@@ -1,3 +1,39 @@
+/** General */
+
+select {
+    padding: 8px;
+    background: #161616;
+    border: none;
+    border-radius: 2px;
+    color: #fff;
+}
+
+button {
+    background: #36c3d1;
+    border: 1px solid #a9e9f7;
+    border-radius: 2px;
+    padding: 6px 30px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/** Helpers */
+
+.flex {
+    display: flex;
+}
+
+.justifySpaceBetween {
+    justify-content: space-between;
+}
+
+.alignItemsCenter {
+    align-items: center;
+}
+
+/* Containers */
+
 #rma-container {
     width: 300px;
     padding: 20px 18px;
@@ -9,20 +45,14 @@
     border-radius: 4px;
     border: 1px solid #b6c9a9;
     box-shadow: 0px 4px 12px 0px rgb(0 0 0 / 20%);
+    font-family: sans-serif;
+    overflow-y: scroll;
+    position: fixed;
+    max-height: calc(100% - 8%);
 }
 
 #rma-container:hover {
     z-index: 9999;
-}
-
-button {
-    background: #36c3d1;
-    border: 1px solid #a9e9f7;
-    border-radius: 2px;
-    padding: 6px 30px;
-    color: #ffffff;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 #title {
@@ -46,6 +76,7 @@ button {
     color: #f1f1f1;
     font-size: 16px;
     margin-bottom: 8px;
+    margin-top: 10px;
 }
 
 .item {
@@ -75,7 +106,6 @@ button {
     color: #d1d1d1;
     font-weight: lighter;
     border-radius: 4px;
-    font-family: sans-serif;
     margin-bottom: 8px;
 }
 
@@ -97,7 +127,6 @@ button {
     color: #d1d1d1;
     font-weight: lighter;
     border-radius: 4px;
-    font-family: sans-serif;
     margin-bottom: 8px;
 }
 
@@ -108,4 +137,51 @@ button {
 
 .seedCard .count{
     background: red;
+}
+
+/**
+* ===============
+*     BUILDER
+* ===============
+*/
+
+#rma-builder{
+    margin-top: 10px;
+}
+
+#rma-builder .action {
+    padding: 5px 10px;
+    background: #363636;
+    border: 1px solid #4b4b4b;
+    color: #d1d1d1;
+    font-weight: lighter;
+    border-radius: 4px;
+    margin: 8px 0;
+}
+
+#builder-available-actions{
+    max-width: 180px;
+}
+
+#builder-script {
+    width: 100%;
+    display: inline-block;
+    border: 1px solid #565656;
+    padding: 15px 15px;
+    background: #2e2e2e;
+    color: #efefef;
+    box-sizing: border-box;
+    margin: 15px 0 5px 0;
+}
+
+#builder-errors {
+    background: #d13636;
+    margin: 15px 0px 0px;
+    border-radius: 2px;
+    padding: 10px 15px;
+    color: #ffc6c6;
+}
+
+#builder-action-adder-container {
+    margin-top: 10px;
 }
