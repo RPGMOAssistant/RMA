@@ -12,6 +12,37 @@ class Action {
     }
 }
 
+class DumbAction extends Action {
+    constructor(label) {
+        super(label);
+    }
+
+    getDescription() {
+        return `${this.label}`;
+    }
+
+    getRegex() {
+        return new RegExp(`${this.label}`);
+    }
+
+    getDefaultLabel() {
+        return this.label;
+    }
+}
+
+class CloseAllWindows extends DumbAction {
+    constructor() {
+        super("Close all windows");
+    }
+
+    async execute() {
+        return new Promise((resolve, reject) => {
+            closeAllActiveWindows();
+            resolve();
+        });
+    }
+}
+
 class MoveTo extends Action {
     i; j;
 
@@ -48,10 +79,70 @@ class MoveTo extends Action {
     }
 }
 
-class StoreInventoryInClosestChest extends Action {
+class InteractWith extends Action {
+    i; j; option;
 
-    constructor() {
-        super("Store inventory in closest chest");
+    constructor(i, j, option) {
+        super("Interact with");
+        this.i = i;
+        this.j = j;
+        this.option = option;
+    }
+
+    getDescription() {
+        return `${this.label} [${this.i},${this.j}], select [${this.option}]`;
+    }
+
+    getRegex() {
+        return /^Interact with \[(?<i>\d+),(?<j>\d+)\], select \[(?<option>\d)\]$/;
+    }
+
+    getDefaultLabel() {
+        return "Interact with [i,j], select [option]";
+    }
+
+    async execute() {
+        return new Promise((resolve, reject) => {
+            selected_object = obj_g(on_map[current_map][this.i][this.j]);
+            ActionMenu.act(this.option - 1);
+            resolve();
+        });
+    }
+}
+
+class WaitForInventoryFreeSpaceEqual extends Action {
+    amount; // The amount of free slots we are waiting for
+
+    constructor(amount) {
+        super("Wait for inventory free slots to be");
+        this.amount = amount;
+    }
+
+    getDescription() {
+        return `${this.label} [${this.amount}]`;
+    }
+
+    getRegex() {
+        return /^Wait for inventory free slots to be \[(?<amount>\d+)\]$/;
+    }
+
+    getDefaultLabel() {
+        return "Wait for inventory free slots to be [x]";
+    }
+
+    async execute() {
+        return new Promise((resolve, reject) => {
+            waitFor(() => getInventoryFreeSpace() <= this.amount, () => {
+                resolve();
+            });
+        });
+    }
+}
+
+// Proxy to WaitForInventoryFreeSpaceEqual with amount = 0
+class WaitForFullInventory extends Action {
+    constructor(amount) {
+        super("Wait for full inventory");
     }
 
     getDescription() {
@@ -59,15 +150,33 @@ class StoreInventoryInClosestChest extends Action {
     }
 
     getRegex() {
-        return /^Store inventory in closest chest$/;
+        return /^Wait for full inventory$/;
     }
 
     getDefaultLabel() {
-        return "Store inventory in closest chest";
+        return "Wait for full inventory";
+    }
+}
+
+class StoreAllInClosestChest extends DumbAction {
+    constructor() {
+        super("Store all in closest chest");
+    }
+
+    async execute() {
+        return new Promise(async (resolve, reject) => {
+            await openClosestChest();
+            Chest.deposit_all();
+            resolve();
+        });
     }
 }
 
 const ALL_ACTIONS = [
     MoveTo,
-    StoreInventoryInClosestChest
+    InteractWith,
+    WaitForInventoryFreeSpaceEqual,
+    WaitForFullInventory,
+    StoreAllInClosestChest,
+    CloseAllWindows
 ]

@@ -153,10 +153,6 @@ const chestHasItem = (id) => !!chest_content.find(item => item.id == id)?.count 
 
 const openClosestChest = async () => {
     return new Promise((resolve, reject) => {
-        if (!Chest.is_open()) {
-            resolve();
-        }
-
         const { path: pathToChest, item: closestChest } = findClosestReachableObject(obj => obj?.name.includes("Chest"));
         selected_object = obj_g(on_map[current_map][closestChest.i] && on_map[current_map][closestChest.i][closestChest.j]);
         ActionMenu.act(0);

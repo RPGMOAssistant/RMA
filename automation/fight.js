@@ -65,8 +65,6 @@ setInterval(() => {
         return;
     }
 
-    console.log(`Target set to ${state.target.name}`);
-
     const { path: pathToTarget, item: closestTarget } = findClosestReachableObject(obj => obj?.name === state.target.name);
     players[0].path = pathToTarget;
 

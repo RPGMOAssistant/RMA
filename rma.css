@@ -168,6 +168,10 @@ button.with-horizontal-margin {
     margin: 8px 0;
 }
 
+#rma-builder .action.is-running{
+    background: red;
+}
+
 #builder-available-actions{
     max-width: 180px;
 }

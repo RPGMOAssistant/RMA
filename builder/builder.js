@@ -2,7 +2,7 @@ let rmaBuilder = new Reef('#rma-builder', {
     data: {
         title: 'Script builder',
         actions: [],
-        availableActions: [new MoveTo(), new StoreInventoryInClosestChest()],
+        availableActions: ALL_ACTIONS.map(action => new action()),
         state: STATE_BUILDER_STOPPED,
         badLinesKeys: [] // Lines that could not be matched with an action
     },
@@ -32,7 +32,7 @@ let rmaBuilder = new Reef('#rma-builder', {
             <div><button data-rma-action="builder-compile-script" id="builder-compile-script">Compile</button></div>
 
             <div id="actions">
-                ${props.actions.map(action => `<div class="action">${action.getDescription()}</div>`).join('')}
+                ${props.actions.map(action => `<div class="action ${action.isRunning ? 'is-running' : ''}">${action.getDescription()}</div>`).join('')}
             </div>
             
 
@@ -58,12 +58,10 @@ const run_builder = async () => {
     }
 
     // Execute every action in order
-    const stack = [...rmaBuilder.data.actions];
-    console.log(stack);
-    for (const action of stack) {
-        console.log("executing action");
-        console.log(action);
+    for (const action of rmaBuilder.data.actions) {
+        action.isRunning = true;
         await action.execute();
+        action.isRunning = false;
     }
 
     setTimeout(() => {
@@ -95,10 +93,33 @@ const compileScript = () => {
                         ));
                         break;
 
-                    case "StoreInventoryInClosestChest":
-                        actions.push(new StoreInventoryInClosestChest());
+                    case "InteractWith":
+                        actions.push(new InteractWith(
+                            parseInt(matches.groups.i, 10),
+                            parseInt(matches.groups.j, 10),
+                            parseInt(matches.groups.option, 10),
+                        ));
                         break;
 
+                    case "WaitForInventoryFreeSpaceEqual":
+                        actions.push(new WaitForInventoryFreeSpaceEqual(
+                            parseInt(matches.groups.amount, 10)
+                        ));
+                        break;
+
+                    case "WaitForFullInventory":
+                        actions.push(new WaitForInventoryFreeSpaceEqual(
+                            parseInt(0, 10)
+                        ));
+                        break;
+
+                    case "StoreAllInClosestChest":
+                        actions.push(new StoreAllInClosestChest());
+                        break;
+
+                    case "CloseAllWindows":
+                        actions.push(new CloseAllWindows());
+                        break;
                     default:
                         break;
                 }
