@@ -1,8 +1,10 @@
 class Action {
-    label;
+    label; isRunning; isFinished;
 
     constructor(label) {
         this.label = label;
+        this.isRunning = false;
+        this.isFinished = false;
     }
 
     getLabel() {
@@ -29,6 +31,20 @@ class MoveTo extends Action {
 
     getDefaultLabel() {
         return "Move to [i,j]";
+    }
+
+    async execute(){
+        return new Promise((resolve, reject) => {
+            players[0].path = findPathFromTo(players[0], { i: this.i, j: this.j }, players[0]);
+
+            waitFor(() => {
+                console.log("waiting");
+                return !movementInProgress(players[0]) && players[0].i == this.i && players[0].j == this.j;
+            }, () => {
+                console.log("resolve");
+                resolve();
+            });
+        });
     }
 }
 

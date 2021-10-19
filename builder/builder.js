@@ -17,24 +17,32 @@ let rmaBuilder = new Reef('#rma-builder', {
                     })}
                 </select> 
 
-                <button data-rma-action="builder-add-action" id="builder-add-action">Add</button>
+                <button data-rma-action="builder-add-action" id="builder-add-action" class="with-horizontal-margin">+</button>
+                <button data-rma-action="builder-target" id="builder-target" class="with-horizontal-margin">
+                T
+                </button>
             </div>
 
             ${props.badLinesKeys.length > 0 ? `<div id="builder-errors">
                 Invalid lines : ${props.badLinesKeys.join(', ')}
             </div>` : ``}
 
-            <textarea data-rma-action="change-builder-script" id="builder-script">Move to [5,6]</textarea>
+            <textarea data-rma-action="change-builder-script" id="builder-script" rows="20">Move to [5,6]</textarea>
+
+            <div><button data-rma-action="builder-compile-script" id="builder-compile-script">Compile</button></div>
 
             <div id="actions">
                 ${props.actions.map(action => `<div class="action">${action.getDescription()}</div>`).join('')}
             </div>
             
-            ${props.state === STATE_BUILDER_RUNNING ? 
-            `<button data-rma-action="builder-stop" id="builder-stop">Stop</button>` : 
-            `<button data-rma-action="builder-run" id="builder-run">Run</button>`}
 
-            <button data-rma-action="builder-save" id="builder-save">Save</button>
+            <div class="flex justifySpaceBetween alignItemsCenter gap-10">
+                ${props.state === STATE_BUILDER_RUNNING ? 
+                `<button data-rma-action="builder-stop" id="builder-stop">Stop</button>` : 
+                `<button data-rma-action="builder-run" id="builder-run">Run</button>`}
+
+                <button data-rma-action="builder-save" id="builder-save">Save</button>
+            </div>
         `;
     },
     attachTo: rma
@@ -42,11 +50,20 @@ let rmaBuilder = new Reef('#rma-builder', {
 
 rmaBuilder.render();
 
-const run_builder = () => {
-    log("Next action");
+const run_builder = async () => {
+    log("Next loop");
 
     if (rmaBuilder.data.state === STATE_BUILDER_STOPPED) {
         return;
+    }
+
+    // Execute every action in order
+    const stack = [...rmaBuilder.data.actions];
+    console.log(stack);
+    for (const action of stack) {
+        console.log("executing action");
+        console.log(action);
+        await action.execute();
     }
 
     setTimeout(() => {
@@ -73,8 +90,8 @@ const compileScript = () => {
                 switch (action.name) {
                     case "MoveTo":
                         actions.push(new MoveTo(
-                            matches.groups.i,
-                            matches.groups.j,
+                            parseInt(matches.groups.i, 10),
+                            parseInt(matches.groups.j, 10)
                         ));
                         break;
 

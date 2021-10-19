@@ -30,35 +30,57 @@ let rma = new Reef('#rma', {
 
 rma.render();
 
+const addTextToScript = (text) => {
+    const scriptElement = document.getElementById("builder-script");
+
+    if (scriptElement.value === '') {
+        scriptElement.value = `${text}`;
+    } else {
+        scriptElement.value = `${scriptElement.value}\n${text}`;
+    }
+}
+
 const clickHandler = function (event) {
     var action = event.target.getAttribute('data-rma-action');
+
+    if (event.target.id === "hud" && rmaBuilder.data.state === STATE_BUILDER_TARGETING) {
+        const clickedPosition = translateMousePosition(mouse_screen.x, mouse_screen.y);
+        addTextToScript(`[${clickedPosition.i},${clickedPosition.j}]`);
+
+        rmaBuilder.data.state = STATE_BUILDER_STOPPED;
+    }
 
     if (!action) return;
 
     switch(action) {
         case 'builder-add-action':
-            const scriptElement = document.getElementById("builder-script");
             const selectedActionValue = document.getElementById("builder-available-actions").value;
-
-            if (scriptElement.value === '') {
-                scriptElement.value = `${selectedActionValue}`;
-            } else {
-                scriptElement.value = `${scriptElement.value}\n${selectedActionValue}`;
-            }
-
+            addTextToScript(selectedActionValue);
             break;
+
         case 'builder-run':
             log("Running script");
             rmaBuilder.data.state = STATE_BUILDER_RUNNING;
             run_builder();
             break;
+
         case 'builder-stop':
             log("Stopping script");
             rmaBuilder.data.state = STATE_BUILDER_STOPPED;
             break;
+
+        case 'builder-target':
+            log("Targeting position");
+            rmaBuilder.data.state = STATE_BUILDER_TARGETING;
+            break;
+
         case 'builder-save':
             log("Saving script");
             download(["toto", "tata"], "My RPG MO script");
+            break;
+
+        case "builder-compile-script":
+            compileScript();
             break;
     }
 };
@@ -84,22 +106,9 @@ const changeHandler = function (event) {
         event.stopImmediatePropagation();
     }
 
-    console.log("onchange");
-
     var action = event.target.getAttribute('data-rma-action');
 
     if (!action) return;
-
-    switch (action) {
-        case 'change-builder-script':
-            compileScript();
-
-            setTimeout(function () {
-                document.getElementById("builder-script").focus();
-            }, 0);
-
-            break;
-    }
 };
 
 document.addEventListener('change', changeHandler, false);

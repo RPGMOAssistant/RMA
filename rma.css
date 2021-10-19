@@ -12,10 +12,15 @@ button {
     background: #36c3d1;
     border: 1px solid #a9e9f7;
     border-radius: 2px;
-    padding: 6px 30px;
+    padding: 6px 12px;
     color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 1px;
+    width: 100%;
+}
+
+button.with-horizontal-margin {
+    margin: 0 8px;
 }
 
 /** Helpers */
@@ -30,6 +35,10 @@ button {
 
 .alignItemsCenter {
     align-items: center;
+}
+
+.gap-10 {
+    gap: 10px;
 }
 
 /* Containers */
@@ -184,4 +193,8 @@ button {
 
 #builder-action-adder-container {
     margin-top: 10px;
+}
+
+#builder-compile-script {
+    margin-bottom: 15px;
 }
