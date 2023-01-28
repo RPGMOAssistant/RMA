@@ -1,5 +1,7 @@
 # RPG MO Assistant - Automation tool
 
+A chrome extension that lets you automate the boring grind in the game.
+
 ## Warning
 
 This is a project I've worked on for fun and it should only be used for learning purpose.
@@ -8,7 +10,7 @@ You shouldn't be botting in any game and you will get banned for using this tool
 ## Features
 
 - Auto combat
-- Auto interaction and item storing in banks
+- Auto interaction (fishing, woodcutting, etc.) and item storing in banks
 - Scripts builder
 - Captcha alert
 
@@ -29,6 +31,8 @@ This is a Chrome extension that you need to install like so :
 The script will be played from top to bottom, and loop until stopped
 
 ## Write your own scripts
+
+[writing-script.webm](https://user-images.githubusercontent.com/92334493/215268502-9375f174-5dfc-43ef-8a8e-6c4ad39f6333.webm)
 
 The script builder lets you write your own scripts with actions to execute :
 
@@ -52,6 +56,8 @@ To write a script :
 
 ## Fight ennemies
 
+[fighting.webm](https://user-images.githubusercontent.com/92334493/215268516-9a0cd14c-40ae-40c4-961b-7ad682ee3105.webm)
+
 - Click "Refresh ennemies" to get a list of nearby ennemies
 - Click on the ennemy you want to fight
 
@@ -59,6 +65,6 @@ Healing items in your inventory will be used to heal if your health goes below "
 
 ## Captcha alert
 
-
+![captcha-alert](https://user-images.githubusercontent.com/92334493/215268527-a44be0f4-544a-4c6f-881d-bbecc42a9106.png)
 
 You'll get a notification when the game wants you to solve a captcha
