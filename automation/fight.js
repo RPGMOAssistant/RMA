@@ -41,7 +41,7 @@ const buildReachableEnnemiesList = (uniqueEnemies) => {
     }
 }
 
-setInterval(() => {
+setInterval(async () => {
     if (!state.target) {
         return;
     }
@@ -65,14 +65,17 @@ setInterval(() => {
         return;
     }
 
-    console.log(`Target set to ${state.target.name}`);
-
     const { path: pathToTarget, item: closestTarget } = findClosestReachableObject(obj => obj?.name === state.target.name);
     players[0].path = pathToTarget;
 
-    waitFor(() => !movementInProgress(players[0]) && !Timers.running("set_target"), () => {
-        selected = obj_g(on_map[current_map][closestTarget.i][closestTarget.j]);
-        selected_object = obj_g(on_map[current_map][closestTarget.i][closestTarget.j]);
-        Player.set_target({ i: closestTarget.i, j: closestTarget.j});
-    });
+    await waitUntil(() => !movementInProgress(players[0]) && !Timers.running("set_target")).catch(e => reject());
+
+    await sleep(getRandomInt(1000, 4500));
+
+    active_menu = -1;
+    BigMenu.show(active_menu);
+
+    selected = { i: closestTarget.i, j: closestTarget.j };
+    selected_object = obj_g(on_map[current_map][closestTarget.i] && on_map[current_map][closestTarget.i][closestTarget.j]);
+    selected_object.fn(selected_object.activities[0].toLowerCase(), selected_object, players[0]);
 }, 5000);

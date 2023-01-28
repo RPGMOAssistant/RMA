@@ -6,6 +6,10 @@ const RMA_CONFIG = {
     MIN_HEALTH_HEALING_THRESHOLD: 85 
 };
 
+const STATE_BUILDER_RUNNING = 'STATE_BUILDER_RUNNING';
+const STATE_BUILDER_STOPPED = 'STATE_BUILDER_STOPPED';
+const STATE_BUILDER_TARGETING = 'STATE_BUILDER_TARGETING';
+
 const DEFAULT_FARMING_STATE = {
     seed: null,
     isRaking: false,
@@ -26,30 +30,69 @@ let state = {
  * ===============================
  */
 
-const log = (message) => {
-    console.log(`RPG MO Assistant - ${message}`);
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 /**
- * Wait until a condition is met
- * @param {Function} condition 
- * @param {Function} callback 
+ * @param {function(): *} callback
+ * @param {number} retryMs
+ * @param {number} timeoutMs
  */
-const waitFor = (condition, callback) => {
-    if (!condition()) {
-        window.setTimeout(waitFor.bind(null, condition, callback), 1000);
-    } else {
-        callback();
-    }
-}
+const waitUntil = async (
+    callback,
+    retryMs = 1500,
+    timeoutMs = 5000
+) =>
+    new Promise(async (resolve, reject) => {
+        let retryHandle = null;
+        let timeoutHandle = setTimeout(() => {
+            if (retryHandle) {
+                clearTimeout(retryHandle);
+            }
+            return reject("Waiting timeout");
+        }, timeoutMs);
+
+        const retryFunction = async () => {
+            const callbackValue = await callback();
+            if (callbackValue) {
+                if (timeoutHandle) {
+                    clearTimeout(timeoutHandle);
+                }
+                return resolve(callbackValue);
+            }
+
+            retryHandle = setTimeout(retryFunction, retryMs);
+        };
+
+        await retryFunction();
+    });
 
 /**
  * Send a notification to the background script, which will trigger a Chrome notification
  * @param {string} type : The notification type. Hardcoded string. Check background.js to know which types can be used 
  */
-const notify = (type) => {
-    var event = new CustomEvent("PassToBackground", { detail: { notification: type } });
+const passToBackground = (detail) => {
+    var event = new CustomEvent("PassToBackground", { detail });
     window.dispatchEvent(event);
+}
+
+const notify = (type) => {
+    passToBackground({ notification: type });
+}
+
+const download = (content, filename) => {
+    passToBackground({ download: { content, filename }});
 }
 
 /**
@@ -131,6 +174,12 @@ const getItemElement = (item_b_i) => {
 const equip = (id) => {
     Inventory.equip(players[0], id);
     Socket.send("equip", { data: { id } });
+    BigMenu.init_inventory();
+}
+
+const equipByName = (itemName) => {
+    const id = players[0].temp.inventory.find(item => item_base[item.id].name === itemName).id;
+    equip(id);
 }
 
 const inventoryItemCount = (id) => Inventory.get_item_count(players[0], id);
@@ -140,20 +189,35 @@ const inventoryHasItem = (id) => inventoryItemCount(id) >= 1;
 const chestHasItem = (id) => !!chest_content.find(item => item.id == id)?.count > 0;
 
 const openClosestChest = async () => {
-    return new Promise((resolve, reject) => {
-        if (!Chest.is_open()) {
-            resolve();
-        }
-
+    return new Promise(async (resolve, reject) => {
         const { path: pathToChest, item: closestChest } = findClosestReachableObject(obj => obj?.name.includes("Chest"));
         selected_object = obj_g(on_map[current_map][closestChest.i] && on_map[current_map][closestChest.i][closestChest.j]);
+        selected = { i: closestChest.i, j: closestChest.j };
+        
         ActionMenu.act(0);
 
-        waitFor(() => Chest.is_open(), () => {
-            resolve();
-        });
+        await waitUntil(() => Chest.is_open()).catch(e => reject());
+        resolve();
     });
 }
 
 const getInventoryFreeSpace = () => Inventory.slots - players[0].temp.inventory.length;
 const inventoryHasItemsNotSelected = () => Inventory.slots - players[0].temp.inventory.filter(obj => obj.selected).length;
+
+const searchChest = (text) => {
+    Mods.Chestm.chest_search_update(text);
+}
+
+const hasHealthItem = () => {
+    let result = false;
+
+    for (var b = 0; b < players[0].temp.inventory.length; b++) {
+        if ("undefined" == typeof item_base[players[0].temp.inventory[b].id].params.no_auto_eat &&
+            "undefined" != typeof item_base[players[0].temp.inventory[b].id].params.heal) {
+            result = true;
+            break;
+        }
+    }
+
+    return result;
+}
