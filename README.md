@@ -1,4 +1,6 @@
+<p align="center">
 <img src="https://user-images.githubusercontent.com/92334493/215270313-7a2ac6d8-ca2f-4c57-ab3e-891e03aefc0b.png" width="320" height="180">
+</p>
 
 # RPG MO Assistant - Automation tool
 
