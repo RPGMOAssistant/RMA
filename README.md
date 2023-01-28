@@ -1,3 +1,5 @@
+![rpg-mo-assistant-real](https://user-images.githubusercontent.com/92334493/215270313-7a2ac6d8-ca2f-4c57-ab3e-891e03aefc0b.png)
+
 # RPG MO Assistant - Automation tool
 
 A chrome extension that lets you automate the boring grind in the game.
