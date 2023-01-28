@@ -18,16 +18,14 @@ let rmaBuilder = new Reef('#rma-builder', {
                 </select> 
 
                 <button data-rma-action="builder-add-action" id="builder-add-action" class="with-horizontal-margin">+</button>
-                <button data-rma-action="builder-target" id="builder-target" class="with-horizontal-margin">
-                T
-                </button>
+                <button data-rma-action="builder-target" id="builder-target" class="with-horizontal-margin"></button>
             </div>
 
             ${props.badLinesKeys.length > 0 ? `<div id="builder-errors">
                 Invalid lines : ${props.badLinesKeys.join(', ')}
             </div>` : ``}
 
-            <textarea data-rma-action="change-builder-script" id="builder-script" rows="20">Move to [5,6]</textarea>
+            <textarea data-rma-action="change-builder-script" id="builder-script" rows="20"></textarea>
 
             <div><button data-rma-action="builder-compile-script" id="builder-compile-script">Compile</button></div>
 
@@ -50,23 +48,28 @@ let rmaBuilder = new Reef('#rma-builder', {
 
 rmaBuilder.render();
 
-const run_builder = async () => {
-    log("Next loop");
-
-    if (rmaBuilder.data.state === STATE_BUILDER_STOPPED) {
-        return;
-    }
-
-    // Execute every action in order
+const executeScript = async () => {
     for (const action of rmaBuilder.data.actions) {
+        await sleep(getRandomInt(1500, 2500));
         action.isRunning = true;
-        await action.execute();
-        action.isRunning = false;
+
+        let successful = false;
+
+        while (!successful) {
+            await action.execute()
+                .then(() => {
+                    action.isRunning = false;
+                    successful = true;
+                }).catch(e => {
+                    successful = false;
+                });
+            await sleep(getRandomInt(500, 1000));
+        }
     }
 
-    setTimeout(() => {
-        run_builder();
-    }, 1000);
+    await sleep(getRandomInt(2000, 10000));
+
+    await executeScript().catch(e => {});
 }
 
 const compileScript = () => {
@@ -101,6 +104,13 @@ const compileScript = () => {
                         ));
                         break;
 
+                    case "Buy":
+                        actions.push(new Buy(
+                            parseInt(matches.groups.amount, 10),
+                            String(matches.groups.itemName)
+                        ));
+                        break;
+
                     case "WaitForInventoryFreeSpaceEqual":
                         actions.push(new WaitForInventoryFreeSpaceEqual(
                             parseInt(matches.groups.amount, 10)
@@ -113,8 +123,25 @@ const compileScript = () => {
                         ));
                         break;
 
+                    case "StoreAllInChest":
+                        actions.push(new StoreAllInChest());
+                        break;
+
                     case "StoreAllInClosestChest":
                         actions.push(new StoreAllInClosestChest());
+                        break;
+
+                    case "WithdrawFromClosestChest":
+                        actions.push(new WithdrawFromClosestChest(
+                            String(matches.groups.itemName),
+                            parseInt(matches.groups.amount, 10)
+                        ));
+                        break;
+
+                    case "EquipItem":
+                        actions.push(new EquipItem(
+                            String(matches.groups.itemName),
+                        ));
                         break;
 
                     case "CloseAllWindows":

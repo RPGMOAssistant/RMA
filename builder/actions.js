@@ -65,16 +65,15 @@ class MoveTo extends Action {
     }
 
     async execute(){
-        return new Promise((resolve, reject) => {
-            players[0].path = findPathFromTo(players[0], { i: this.i, j: this.j }, players[0]);
+        return new Promise(async (resolve, reject) => {
+            active_menu = -1;
+            BigMenu.show(active_menu);
+            selected = { i: this.i, j: this.j };
+            players[0].path = findPathFromTo(players[0], selected, players[0]);
 
-            waitFor(() => {
-                console.log("waiting");
-                return !movementInProgress(players[0]) && players[0].i == this.i && players[0].j == this.j;
-            }, () => {
-                console.log("resolve");
-                resolve();
-            });
+            await waitUntil(() => !movementInProgress(players[0]) && players[0].i == this.i && players[0].j == this.j).catch(e => reject());
+
+            resolve();
         });
     }
 }
@@ -90,7 +89,7 @@ class InteractWith extends Action {
     }
 
     getDescription() {
-        return `${this.label} [${this.i},${this.j}], select [${this.option}]`;
+        return `${this.label} [${this.i},${this.j}], select option n°${this.option}`;
     }
 
     getRegex() {
@@ -103,8 +102,14 @@ class InteractWith extends Action {
 
     async execute() {
         return new Promise((resolve, reject) => {
-            selected_object = obj_g(on_map[current_map][this.i][this.j]);
-            ActionMenu.act(this.option - 1);
+            active_menu = -1;
+            BigMenu.show(active_menu);
+
+            selected = { i: this.i, j: this.j };
+            selected_object = obj_g(on_map[current_map][this.i] && on_map[current_map][this.i][this.j]);
+            selected_object.fn(selected_object.activities[this.option - 1].toLowerCase(), selected_object, players[0]);
+
+            //ActionMenu.act(this.option - 1);
             resolve();
         });
     }
@@ -119,7 +124,7 @@ class WaitForInventoryFreeSpaceEqual extends Action {
     }
 
     getDescription() {
-        return `${this.label} [${this.amount}]`;
+        return `Wait until we have ${this.amount}(or less) free slots in inventory`;
     }
 
     getRegex() {
@@ -131,10 +136,9 @@ class WaitForInventoryFreeSpaceEqual extends Action {
     }
 
     async execute() {
-        return new Promise((resolve, reject) => {
-            waitFor(() => getInventoryFreeSpace() <= this.amount, () => {
-                resolve();
-            });
+        return new Promise(async (resolve, reject) => {
+            await waitUntil(() => getInventoryFreeSpace() <= this.amount).catch(e => reject());
+            resolve();
         });
     }
 }
@@ -166,7 +170,143 @@ class StoreAllInClosestChest extends DumbAction {
     async execute() {
         return new Promise(async (resolve, reject) => {
             await openClosestChest();
+            await waitUntil(() => Chest.is_open()).catch(e => reject());
             Chest.deposit_all();
+
+            active_menu = -1;
+            BigMenu.show(active_menu);
+
+            document.getElementById("chest_close").click();
+            resolve();
+        });
+    }
+}
+
+class StoreAllInChest extends DumbAction {
+    constructor() {
+        super("Store all in chest");
+    }
+
+    async execute() {
+        return new Promise(async (resolve, reject) => {
+            await waitUntil(() => Chest.is_open()).catch(e => reject());
+            Chest.deposit_all();
+
+            active_menu = -1;
+            BigMenu.show(active_menu);
+
+            document.getElementById("chest_close").click();
+
+            resolve();
+        });
+    }
+}
+
+
+class WithdrawFromClosestChest extends Action {
+    itemName; amount;
+
+    constructor(itemName, amount) {
+        super("Withdraw from closest chest");
+        this.itemName = itemName;
+        this.amount = amount;
+    }
+
+    getDescription() {
+        return `Withdraw ${this.amount} "${this.itemName}" from closest chest`;
+    }
+
+    getRegex() {
+        return /^Withdraw \[(?<amount>\d+)\] \[(?<itemName>.+)\] from closest chest$/;
+    }
+
+    getDefaultLabel() {
+        return "Withdraw [amount] [item_name] from closest chest";
+    }
+
+    async execute() {
+        return new Promise(async (resolve, reject) => {
+            await openClosestChest();
+            
+            searchChest(this.itemName);
+
+            await waitUntil(() => chests[0].length === 1).catch(e => reject());
+
+            selected_chest = '0';
+            BigMenu.update_chest_selection(true);
+
+            Chest.withdraw(this.amount);
+
+            closeAllActiveWindows();
+            await waitUntil(() => !Chest.is_open()).catch(e => reject());
+            resolve();
+        });
+    }
+}
+
+class EquipItem extends Action {
+    itemName;
+
+    constructor(itemName) {
+        super("Equip item");
+        this.itemName = itemName;
+    }
+
+    getDescription() {
+        return `Equip "${this.itemName}"`;
+    }
+
+    getRegex() {
+        return /^Equip \[(?<itemName>.+)\]$/;
+    }
+
+    getDefaultLabel() {
+        return "Equip [item_name]";
+    }
+
+    async execute() {
+        return new Promise(async (resolve, reject) => {
+            equipByName(this.itemName);
+            resolve();
+        });
+    }
+}
+
+class Buy extends Action {
+    itemName; amount;
+
+    constructor(amount, itemName) {
+        super("Buy");
+        this.amount = amount;
+        this.itemName = itemName;
+    }
+
+    getDescription() {
+        return `Buy ${this.amount} ${this.itemName}`;
+    }
+
+    getRegex() {
+        return /^Buy \[(?<amount>\d+)\] \[(?<itemName>.+)\]$/;
+    }
+
+    getDefaultLabel() {
+        return "Buy [amount] [item_name]";
+    }
+
+    async execute() {
+        return new Promise(async (resolve, reject) => {
+            await waitUntil(() => (shop_opened ?? false) && shop_content?.length > 0).catch(e => reject());
+
+            const itemInShop = shop_content.find((item) => item_base[item.id]?.name == this.itemName);
+            const itemIdInShop = shop_content.indexOf(itemInShop);
+
+            selected_shop = itemIdInShop;
+            BigMenu.update_shop_selection();
+
+            Shop.buy_x(this.amount);
+
+            closeAllActiveWindows();
+            await waitUntil(() => !shop_opened).catch(e => reject());
             resolve();
         });
     }
@@ -175,8 +315,12 @@ class StoreAllInClosestChest extends DumbAction {
 const ALL_ACTIONS = [
     MoveTo,
     InteractWith,
+    Buy,
     WaitForInventoryFreeSpaceEqual,
     WaitForFullInventory,
+    StoreAllInChest,
     StoreAllInClosestChest,
-    CloseAllWindows
+    WithdrawFromClosestChest,
+    EquipItem,
+    CloseAllWindows,
 ]

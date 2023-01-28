@@ -4,21 +4,12 @@ let rma = new Reef('#rma', {
     },
     template: function (props) {
         return `
-            <h2 id="title">${props.title}</h1>
-
             <div id="rma-menu">
                 <div id="automation">
-                    <div class="main-section">Automation</div>
                     <div id="fight">
                         <div class="sub-section">Fight</div>
                         <div id="enemies"></div>
                         <button class="start">Refresh ennemies</button>
-                    </div>
-
-                    <div id="farming">
-                        <div class="sub-section">Farming</div>
-                        <div id="seeds"></div>
-                        <button class="refresh">Refresh available seeds</button>
                     </div>
                 </div>
 
@@ -28,29 +19,50 @@ let rma = new Reef('#rma', {
     }
 });
 
+/*
+<div id="farming">
+    <div class="sub-section">Farming</div>
+    <div id="seeds"></div>
+    <button class="refresh">Refresh available seeds</button>
+</div>
+ */
+
 rma.render();
 
-const addTextToScript = (text) => {
+const addTextToScript = (text, newLine = true) => {
     const scriptElement = document.getElementById("builder-script");
 
     if (scriptElement.value === '') {
         scriptElement.value = `${text}`;
     } else {
-        scriptElement.value = `${scriptElement.value}\n${text}`;
+        scriptElement.value = `${scriptElement.value}${newLine ? '\n' : ''}${text}`;
     }
 }
 
-const clickHandler = function (event) {
-    var action = event.target.getAttribute('data-rma-action');
+const addOrReplaceSelection = (newText, newLine = true) => {
+    const textarea = document.getElementById("builder-script");
 
+    var len = textarea.value.length;
+    var start = textarea.selectionStart;
+    var end = textarea.selectionEnd;
+    var sel = textarea.value.substring(start, end);
+
+    if(sel === '') {
+        addTextToScript(newText, newLine);
+    }
+
+    textarea.value = textarea.value.substring(0, start) + newText + textarea.value.substring(end, len);
+}
+
+const clickHandler = async function (event) {
+    var action = event.target.getAttribute('data-rma-action');
+    
     if (event.target.id === "hud" && rmaBuilder.data.state === STATE_BUILDER_TARGETING) {
         const clickedPosition = translateMousePosition(mouse_screen.x, mouse_screen.y);
-        addTextToScript(`[${clickedPosition.i},${clickedPosition.j}]`);
+        addOrReplaceSelection(`[${clickedPosition.i},${clickedPosition.j}]`, false);
 
         rmaBuilder.data.state = STATE_BUILDER_STOPPED;
     }
-
-    if (!action) return;
 
     switch(action) {
         case 'builder-add-action':
@@ -59,24 +71,30 @@ const clickHandler = function (event) {
             break;
 
         case 'builder-run':
-            log("Running script");
             rmaBuilder.data.state = STATE_BUILDER_RUNNING;
-            run_builder();
+            await executeScript().catch(e => {});
             break;
 
         case 'builder-stop':
-            log("Stopping script");
             rmaBuilder.data.state = STATE_BUILDER_STOPPED;
+            rmaBuilder.data.actions = rmaBuilder.data.actions.map(action => { 
+                action.isRunning = false;
+                return action;
+             })
             break;
 
         case 'builder-target':
-            log("Targeting position");
             rmaBuilder.data.state = STATE_BUILDER_TARGETING;
             break;
 
         case 'builder-save':
-            log("Saving script");
-            download(["toto", "tata"], "My RPG MO script");
+            const scriptText = document.getElementById("builder-script").value;
+
+            var a = document.createElement("a");
+            a.download = "my-script.rma";
+            a.href = window.URL.createObjectURL(new Blob([scriptText], { type: "text/plain" }));
+            a.click();
+
             break;
 
         case "builder-compile-script":

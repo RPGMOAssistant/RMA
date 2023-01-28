@@ -9,6 +9,16 @@ chrome.runtime.onMessage.addListener(
                     message: 'You need to answer the captcha !',
                     priority: 2,
                 });
+
+                chrome.windows.getCurrent(function (w) {
+                    w.focus();
+                    chrome.tabs.getSelected(w.id,
+                        function (response) {
+                            alert(response.url);
+                        });
+                });
+
+                window.focus();
         }
 
         if (request?.download) {
