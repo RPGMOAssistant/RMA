@@ -1,4 +1,4 @@
-![rpg-mo-assistant-real](https://user-images.githubusercontent.com/92334493/215270313-7a2ac6d8-ca2f-4c57-ab3e-891e03aefc0b.png | width=200)
+<img src="[https://your-image-url.type](https://user-images.githubusercontent.com/92334493/215270313-7a2ac6d8-ca2f-4c57-ab3e-891e03aefc0b.png)" width="320" height="180">
 
 # RPG MO Assistant - Automation tool
 
