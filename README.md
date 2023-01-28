@@ -21,8 +21,8 @@ You shouldn't be botting in any game and you will get banned for using this tool
 ## Installation
 
 This is a Chrome extension that you need to install like so :
-- Download the latest release or clone the repository
-- Go to manage extensions (chrome://extensions/)
+- [Download the latest release](https://github.com/RPGMOAssistant/RMA/releases) or clone the repository
+- In Chrome, go to manage extensions ([chrome://extensions/](chrome://extensions/))
 - Click "Load unpacked"
 - Select the RMA folder
 
