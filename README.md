@@ -58,12 +58,12 @@ To write a script :
 - Click Compile
 - Click Run
 
-## Fight ennemies
+## Fight enemies
 
 [fighting.webm](https://user-images.githubusercontent.com/92334493/215268516-9a0cd14c-40ae-40c4-961b-7ad682ee3105.webm)
 
-- Click "Refresh ennemies" to get a list of nearby ennemies
-- Click on the ennemy you want to fight
+- Click "Refresh enemies" to get a list of nearby enemies
+- Click on the enemy you want to fight
 
 Healing items in your inventory will be used to heal if your health goes below "MIN_HEALTH_HEALING_THRESHOLD" (set in utils.js)
 
