@@ -23,6 +23,10 @@ body {
     width: 100%;
 }
 
+.video-container {
+    width: 50%;
+}
+
 h1 {
     font-size: 3em;
     font-weight: 300;
@@ -46,7 +50,7 @@ h2 {
 }
 
 #content-inner {
-    width: 800px;
+    width: 670px;
     margin: 0 auto;
     padding: 50px;
 }
@@ -57,5 +61,12 @@ h2 {
     height: 100px;
     text-align: center;
     font-size: 0.8em;
-    color: grey;
+    color: #8d8d8d;
+    padding: 20px;
+    border-top: 1px solid rgb(62, 62, 62);
+}
+
+#footer p {
+    padding:0;
+    margin: 0;
 }
