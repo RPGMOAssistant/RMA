@@ -89,7 +89,7 @@ h2 {
 }
 
 #buttons {
-    margin: 50px 50px 90px;
+    margin: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
