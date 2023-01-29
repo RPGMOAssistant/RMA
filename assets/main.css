@@ -12,7 +12,8 @@ body {
     flex-direction: column;
     justify-content: center;
     width: 100%;
-    padding: 50px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     text-align: center;
     background: rgb(34, 34, 34);
 }
@@ -39,7 +40,6 @@ video {
     margin-top: 10px;
     border-radius: 10px;
     margin-bottom: 35px;
-    padding: 0px 0px 35px 0px;
     box-shadow: 0 0px 215px 0px #ffffff29;
 }
 
@@ -58,6 +58,7 @@ h2 {
     font-weight: 300;
     color: #cccccc;
     margin-bottom: 50px;
+    font-style: italic;
 }
 
 #content {
@@ -89,8 +90,7 @@ h2 {
 }
 
 #buttons {
-    padding: 50px;
-    margin-top: 50px;
+    margin: 50px 50px 90px;
     display: flex;
     align-items: center;
     justify-content: center;
