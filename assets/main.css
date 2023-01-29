@@ -19,12 +19,28 @@ body {
 
 #videos{
     display: flex;
-    justify-content: space-evenly;
-    width: 100%;
+    justify-content: center;
+    width: 960px;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.video-container {
-    width: 50%;
+.video-container h2 {
+    border-bottom: 6px solid rgb(54, 195, 209);
+    padding-bottom: 14px;
+    width: 350px;
+    text-align: center;
+    margin: 15px auto;
+}
+
+video {
+    margin-top: 10px;
+    border-radius: 10px;
+    margin-bottom: 35px;
+    padding: 0px 0px 35px 0px;
+    box-shadow: 0 0px 215px 0px #ffffff29;
 }
 
 h1 {
@@ -74,6 +90,7 @@ h2 {
 
 #buttons {
     padding: 50px;
+    margin-top: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
