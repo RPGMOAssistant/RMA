@@ -40,7 +40,8 @@ h2 {
 #subtitle {
     font-size: 1.5em;
     font-weight: 300;
-    color: white;
+    color: #cccccc;
+    margin-bottom: 50px;
 }
 
 #content {
@@ -69,4 +70,22 @@ h2 {
 #footer p {
     padding:0;
     margin: 0;
+}
+
+#buttons {
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+#buttons a {
+    margin: 0 20px;
+    padding: 10px 20px;
+    background: rgb(54, 195, 209);
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-size: 1.2em;
 }
