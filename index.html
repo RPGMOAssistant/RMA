@@ -11,11 +11,6 @@ layout: base
     You shouldn't be botting in any game and you will get banned for using this tool.
 </div>
 
-<div id="videos">
-    <h2>Write your own scripts</h2>
-    <h2>Fight ennemies</h2>
-</div>
-
 <div id="features">
     <ul>
         <li>Auto combat</li>
@@ -43,4 +38,48 @@ layout: base
         <li>Write and your script, compile it, and run</li>
     </ul>
         The script will be played from top to bottom, and loop until stopped
+
+    <h2>Write your own scripts</h2>
+
+    <div>
+        The script builder lets you write your own scripts with actions to execute :
+
+        <ul>
+            <li>Move to [i,j]</li>
+            <li>Interact with [i,j], select [option]</li>
+            <li>Buy [amount] [item_name]</li>
+            <li>Wait for inventory free slots to be [x]</li>
+            <li>Wait for full inventory</li>
+            <li>Store all in chest</li>
+            <li>Store all in closest chest (buggy, use a combination of Interact with and Store all in chest)</li>
+            <li>Withdraw [amount] [item_name] from closest chest</li>
+            <li>Equip [item_name]</li>
+            <li>Close all windows</li>
+        </ul>
+
+        To write a script :
+
+        <ul>
+            <li>Write your actions</li>
+            <li>Use the target button to get the [i,j] coordinates</li>
+            <li>Click Compile</li>
+            <li>Click Run</li>
+        </ul>
+    </div>
+
+    <h2>Fight enemies</h2>
+
+    <div>
+        <ul>
+            <li></li>Click "Refresh enemies" to get a list of nearby enemies
+            <li></li>Click on the enemy you want to fight
+        </ul>
+
+        Healing items in your inventory will be used to heal if your health goes below "MIN_HEALTH_HEALING_THRESHOLD" (set in utils.js)
+    </div>
+
+    <h2>Captcha alert</h2>
+    <div>
+        You'll get a notification when the game wants you to solve a captcha
+    </div>
 </div>
