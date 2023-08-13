@@ -5,6 +5,11 @@ findRecheableEnnemiesButton.addEventListener('click', (e) => {
     // Find all reachable targets (ennemies we can walk to)
     const reachableTargets = findReachableObjects((obj) => obj?.activities.includes("Attack"));
 
+    // const uniqueEnemies = new Set()
+    // reachableTargets.forEach(target => {
+    //     uniqueEnemies.add(target.name)
+    // });
+
     const uniqueEnemies = reachableTargets.reduce((acc, target) => {
         if (!acc.some(t => t.name === target.name)) {
             acc.push(target);
@@ -12,7 +17,7 @@ findRecheableEnnemiesButton.addEventListener('click', (e) => {
         return acc;
     }, []);
 
-    // Build the list of ennemies and place it into the DOM
+    // Build the list of enemies and place it into the DOM
     buildReachableEnnemiesList(uniqueEnemies);
 });
 
@@ -51,9 +56,7 @@ setInterval(async () => {
      **/
 
     //  We already have one
-    if (players[0].temp.target_id !== -1) {
-        return;
-    }
+    if (players[0].temp.target_id !== -1) return;
 
     // We're moving
     if (movementInProgress(players[0]) || Timers.running("set_target")) {
@@ -70,7 +73,7 @@ setInterval(async () => {
 
     await waitUntil(() => !movementInProgress(players[0]) && !Timers.running("set_target")).catch(e => reject());
 
-    await sleep(getRandomInt(1000, 4500));
+    // await sleep(getRandomInt(1000, 4500));
 
     active_menu = -1;
     BigMenu.show(active_menu);

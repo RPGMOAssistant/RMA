@@ -108,6 +108,11 @@
 *    Fighting
 * ==============
 */
+#enemies {
+    max-height: 10rem;
+    overflow-y: auto;
+    margin: 1rem 0;
+}
 
 .enemyCard {
     padding: 10px;
