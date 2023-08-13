@@ -46,7 +46,7 @@ class CloseAllWindows extends DumbAction {
 class MoveTo extends Action {
     i; j;
 
-    constructor(i,j) {
+    constructor(i, j) {
         super("Move to");
         this.i = i;
         this.j = j;
@@ -64,7 +64,7 @@ class MoveTo extends Action {
         return "Move to [i,j]";
     }
 
-    async execute(){
+    async execute() {
         return new Promise(async (resolve, reject) => {
             active_menu = -1;
             BigMenu.show(active_menu);
@@ -227,7 +227,7 @@ class WithdrawFromClosestChest extends Action {
     async execute() {
         return new Promise(async (resolve, reject) => {
             await openClosestChest();
-            
+
             searchChest(this.itemName);
 
             await waitUntil(() => chests[0].length === 1).catch(e => reject());
@@ -312,6 +312,50 @@ class Buy extends Action {
     }
 }
 
+class WaitXTime extends Action {
+    option;
+
+    constructor(option) {
+        super("Wait X Time");
+        this.option = option;
+    }
+
+    getDescription() {
+        return `${this.label} , select option n°${this.option}`;
+    }
+
+    getRegex() {
+        return /^Wait X Time , select \[(?<option>\d+)\]$/;
+    }
+
+    getDefaultLabel() {
+        return "Wait X Time , select [option]";
+    }
+
+    async execute() {
+        await wait(this.option);
+    }
+
+    // async execute() {
+    //     return new Promise((resolve, reject) => {
+    //         active_menu = -1;
+    //         BigMenu.show(active_menu);
+
+    //         selected = { i: this.i, j: this.j };
+    //         selected_object = obj_g(on_map[current_map][this.i] && on_map[current_map][this.i][this.j]);
+    //         selected_object.fn(selected_object.activities[this.option - 1].toLowerCase(), selected_object, players[0]);
+
+    //         //ActionMenu.act(this.option - 1);
+    //         resolve();
+    //     });
+    // }
+}
+
+
+function wait(durationInSeconds) {
+    return new Promise(resolve => setTimeout(resolve, durationInSeconds * 1000));
+}
+
 const ALL_ACTIONS = [
     MoveTo,
     InteractWith,
@@ -323,4 +367,5 @@ const ALL_ACTIONS = [
     WithdrawFromClosestChest,
     EquipItem,
     CloseAllWindows,
+    WaitXTime
 ]

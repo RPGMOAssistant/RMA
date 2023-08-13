@@ -239,3 +239,4 @@ const storeAll = async () => {
 const resetState = () => {
     state.farming = { ...DEFAULT_FARMING_STATE, seed: state.farming.seed };
 }
+
