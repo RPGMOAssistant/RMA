@@ -18,7 +18,7 @@ fetch(chrome.runtime.getURL('/menu.html')).then(r => r.text()).then(html => {
     ];
 
     for (const filename of scripts) {
-        var s = document.createElement('script');
+        let s = document.createElement('script');
 
         s.src = chrome.runtime.getURL(filename);
         s.onload = function () {

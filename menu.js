@@ -47,7 +47,7 @@ const addOrReplaceSelection = (newText, newLine = true) => {
     var end = textarea.selectionEnd;
     var sel = textarea.value.substring(start, end);
 
-    if(sel === '') {
+    if (sel === '') {
         addTextToScript(newText, newLine);
     }
 
@@ -56,7 +56,7 @@ const addOrReplaceSelection = (newText, newLine = true) => {
 
 const clickHandler = async function (event) {
     var action = event.target.getAttribute('data-rma-action');
-    
+
     if (event.target.id === "hud" && rmaBuilder.data.state === STATE_BUILDER_TARGETING) {
         const clickedPosition = translateMousePosition(mouse_screen.x, mouse_screen.y);
         addOrReplaceSelection(`[${clickedPosition.i},${clickedPosition.j}]`, false);
@@ -64,7 +64,7 @@ const clickHandler = async function (event) {
         rmaBuilder.data.state = STATE_BUILDER_STOPPED;
     }
 
-    switch(action) {
+    switch (action) {
         case 'builder-add-action':
             const selectedActionValue = document.getElementById("builder-available-actions").value;
             addTextToScript(selectedActionValue);
@@ -72,29 +72,32 @@ const clickHandler = async function (event) {
 
         case 'builder-run':
             rmaBuilder.data.state = STATE_BUILDER_RUNNING;
-            await executeScript().catch(e => {});
+            await executeScript().catch(e => { });
             break;
 
         case 'builder-stop':
             rmaBuilder.data.state = STATE_BUILDER_STOPPED;
-            rmaBuilder.data.actions = rmaBuilder.data.actions.map(action => { 
+            rmaBuilder.data.actions = rmaBuilder.data.actions.map(action => {
                 action.isRunning = false;
+                action.isFinished = true;
                 return action;
-             })
+            })
             break;
 
         case 'builder-target':
             rmaBuilder.data.state = STATE_BUILDER_TARGETING;
             break;
 
+        case 'builder-reset':
+            rmaBuilder.data.actions = []
+            break;
+
         case 'builder-save':
             const scriptText = document.getElementById("builder-script").value;
-
             var a = document.createElement("a");
             a.download = "my-script.rma";
             a.href = window.URL.createObjectURL(new Blob([scriptText], { type: "text/plain" }));
             a.click();
-
             break;
 
         case "builder-compile-script":
@@ -107,7 +110,7 @@ document.addEventListener('click', clickHandler, false);
 
 const keyupHandler = function (event) {
     // Don't let the game handle keyup when writing inside the script builder
-    if(event.target.id === "builder-script") {
+    if (event.target.id === "builder-script") {
         event.stopPropagation();
         event.preventDefault();
         event.stopImmediatePropagation();

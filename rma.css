@@ -1,6 +1,5 @@
 /** General */
-
-select {
+#rma select {
     padding: 8px;
     background: #161616;
     border: none;
@@ -8,7 +7,7 @@ select {
     color: #fff;
 }
 
-button {
+#rma button {
     background: #36c3d1;
     border: 1px solid #a9e9f7;
     border-radius: 2px;
@@ -19,7 +18,7 @@ button {
     width: 100%;
 }
 
-button.with-horizontal-margin {
+#rma  button.with-horizontal-margin {
     margin: 0 8px;
 }
 
@@ -52,8 +51,8 @@ button.with-horizontal-margin {
     padding: 10px 6px 10px 15px;
     background: #222222;
     position: fixed;
-    left: 20px;
-    top: 20px;
+    left: 10px;
+    top: 10px;
     z-index: 1;
     border-radius: 4px;
     border: 1px solid #b6c9a9;
@@ -109,6 +108,11 @@ button.with-horizontal-margin {
 *    Fighting
 * ==============
 */
+#enemies {
+    max-height: 10rem;
+    overflow-y: auto;
+    margin: 1rem 0;
+}
 
 .enemyCard {
     padding: 10px;
